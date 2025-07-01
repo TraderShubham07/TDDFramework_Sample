@@ -32,12 +32,18 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.4.1")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    implementation("commons-io:commons-io:2.19.0")
+}
+
+task copyExtentReport(type: Copy) {
+    from "$rootDir/test-output"
+    include 'spark.html'
+    into "$buildDir/reports/tests"
 }
 
 test {
     dependsOn cleanTest
-    useTestNG() {
+    useTestNG {
         useDefaultListeners = true
     }
+    finalizedBy copyExtentReport
 }

@@ -2,8 +2,8 @@ name: Run Selenium Tests Daily
 
 on:
   schedule:
-    - cron: '0 6 * * *'
-  workflow_dispatch:
+    - cron: '30 3 * * *' # 09:00 AM IST daily
+  workflow_dispatch: # allows manual run
 
 jobs:
   test:
@@ -17,34 +17,25 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: 17
+          java-version: '17'
 
       - name: Install Chrome
-        run: |
-          sudo apt update
-          sudo apt install -y google-chrome-stable
-
-      - name: Setup ChromeDriver (matching Chrome)
-        uses: nanasess/setup-chromedriver@v2
-        with:
-          chromedriver-version: latest
-        env:
-          CHROME_BIN: /usr/bin/google-chrome
+        uses: browser-actions/setup-chrome@v1
 
       - name: Start virtual display (Xvfb)
         run: |
+          sudo apt-get update
           sudo apt-get install -y xvfb
-          Xvfb :99 &
-          export DISPLAY=:99
-
+          Xvfb :99 -ac -screen 0 1920x1080x24 > /dev/null 2>&1 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
       - name: Grant execute permission to Gradle
         run: chmod +x gradlew
 
       - name: Run Tests with Gradle
         run: ./gradlew clean test
 
-      - name: Upload Test Reports (Extent Spark)
+      - name: Upload Test Reports
         uses: actions/upload-artifact@v4
         with:
-          name: SparkReport
-          path: build/reports/tests/spark.html
+          name: Test Reports
+          path: build/reports/tests/test

@@ -1,5 +1,6 @@
 package core;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.testng.annotations.AfterMethod;
@@ -32,6 +33,7 @@ public abstract class BaseTest {
 
     @BeforeMethod
     public void setUp(){
+        WebDriverManager.chromedriver().setup();
         driver=new ChromeDriver();
     }
 

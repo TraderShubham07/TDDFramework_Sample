@@ -32,7 +32,7 @@ public class NaukriPage extends NaukriMaps {
         BaseCommands.click(resumeHeadlinesIcon());
         BaseCommands.click(resumeHeadlinesIcon());
         actualResumeHeadlinesContent = BaseCommands.getText(resumeHeadlineContentField());
-        System.out.println("Actual is : " + actualResumeHeadlinesContent);
+//        System.out.println("Actual is : " + actualResumeHeadlinesContent);
         resumeHeadlinesContent();
         BaseCommands.click(saveBtn());
         BaseCommands.waitForElement(successMessage());

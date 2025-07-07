@@ -1,0 +1,9 @@
+<suite name="Suite" parallel="classes" thread-count="2">
+    <test name="Test">
+        <classes>
+<!--            <class name="AmazonSearch"/>-->
+<!--            <class name="GoogleSearch"/>-->
+            <class name="NaukriUpdate"/>
+        </classes>
+    </test>
+</suite>

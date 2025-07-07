@@ -32,6 +32,9 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.4.1")
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
+
+    // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
+    implementation("io.rest-assured:rest-assured:5.5.5")
 }
 
 task copyExtentReport(type: Copy) {
@@ -44,6 +47,7 @@ test {
     dependsOn cleanTest
     useTestNG {
         useDefaultListeners = true
+        suites 'src/test/resources/testng.xml' // adjust path if needed
     }
     finalizedBy copyExtentReport
 }

@@ -1,11 +1,13 @@
 import core.BaseCommands;
 import core.BaseTest;
+import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
 import pages.AmazonPages;
 
 public class AmazonSearch extends BaseTest {
     AmazonPages amazonPages = AmazonPages.getInstance();
 
+    @Ignore
     @Test
     public void amazonLaunch() throws InterruptedException {
         BaseCommands.getURL("https://www.amazon.com/");

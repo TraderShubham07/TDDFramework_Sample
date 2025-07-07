@@ -23,12 +23,34 @@ jobs:
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
-      - name: Start virtual display (Xvfb)
+      - name: Install XVFB and ffmpeg
         run: |
           sudo apt-get update
-          sudo apt-get install -y xvfb
-          Xvfb :99 -ac -screen 0 1920x1080x24 > /dev/null 2>&1 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
+          sudo apt-get install -y xvfb ffmpeg
+
+      - name: Start XVFB and recording
+        run: |
+          export DISPLAY=:99
+          Xvfb :99 -screen 0 1920x1080x24 &
+          ffmpeg -y -video_size 1920x1080 -framerate 30 -f x11grab -i :99.0 test-recording.mp4 > /dev/null 2>&1 &
+          echo $! > ffmpeg.pid
+
+      - name: Build and Run Tests
+        env:
+          DISPLAY: :99
+        run: |
+          ./gradlew test  # or use `mvn test` if you're using Maven
+
+      - name: Stop recording
+        run: |
+          kill $(cat ffmpeg.pid) || true
+
+      - name: Upload test video
+        uses: actions/upload-artifact@v3
+        with:
+          name: selenium-test-video
+          path: test-recording.mp4
+
       - name: Grant execute permission to Gradle
         run: chmod +x gradlew
 

@@ -15,7 +15,7 @@ public abstract class BaseTest {
 //    private static final ReadProperty readProperty = ReadProperty.getInstance();
 //    public static final String testDataExcel = readProperty.readProperties("testDataPath");
 
-    public BaseTest(){
+    public BaseTest() {
     }
 
     //Clears Screenshot directory
@@ -32,13 +32,15 @@ public abstract class BaseTest {
     }
 
     @BeforeMethod
-    public void setUp(){
+    public void setUp() {
         WebDriverManager.chromedriver().setup();
-        driver=new ChromeDriver();
+        driver = new ChromeDriver();
     }
 
     @AfterMethod
-    public void tearDown(){
-        driver.quit();
+    public void tearDown() {
+        if (driver != null) {
+            driver.quit();  // This closes all windows and ends the session
+        }
     }
 }

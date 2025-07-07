@@ -31,6 +31,8 @@ public class BaseCommands extends BaseTest {
     public static void getURL(String inputURL) {
         try {
             driver.get(inputURL);
+            driver.manage().window().maximize();
+//            driver.navigate().to(inputURL);
             test.pass("Entered application URL successfully");
             test.info("Application URL is " + inputURL);
         } catch (Exception var4) {
@@ -174,6 +176,15 @@ public class BaseCommands extends BaseTest {
         } catch (IOException e) {
             // Assert.fail("failed to clear the directory");
             e.printStackTrace();
+        }
+    }
+
+    public static String getText(By element) {
+        try {
+            return driver.findElement(element).getText();
+        } catch (NoSuchElementException e) {
+            System.out.println("Element not found: " + element);
+            return "";
         }
     }
 }

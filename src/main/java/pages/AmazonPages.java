@@ -16,4 +16,12 @@ public class AmazonPages extends AmazonMaps {
     public void click() {
         BaseCommands.click(amazonLogo());
     }
+
+    public void searchBox() throws InterruptedException {
+        BaseCommands.sendAndClick(searchBox1(),"Remote");
+        BaseCommands.click(searchBtn());
+        Thread.sleep(2000);
+        BaseCommands.click(orderClick());
+
+    }
 }

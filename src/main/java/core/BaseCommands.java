@@ -5,9 +5,12 @@ import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,6 +19,8 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import static utils.ListenersImplementation.test;
 
@@ -132,6 +137,16 @@ public class BaseCommands extends BaseTest {
         }
     }
 
+    public static void clickWithAction(By element){
+        Actions actions = new Actions(driver);
+        actions.click(findElement(element)).perform();
+
+    }
+
+    public static void click(WebElement element) {
+        element.click();
+    }
+
     public static By waitForElementToBeClickable(By locator) {
         try {
             wait = new WebDriverWait(driver, Duration.ofSeconds(30));
@@ -186,5 +201,149 @@ public class BaseCommands extends BaseTest {
             System.out.println("Element not found: " + element);
             return "";
         }
+    }
+
+    public static void moveToElement(By element) {
+        try {
+            waitForVisibilityOfElement(element);
+            Actions actions = new Actions(driver);
+            actions.moveToElement(driver.findElement(element)).perform();
+        } catch (NoSuchElementException e) {
+            System.out.println("Element not found: " + element);
+        } catch (Exception e) {
+            System.out.println("Could not move to element: " + element + " due to " + e.getMessage());
+        }
+    }
+
+    public static WebElement findElement(By locator) {
+        return driver.findElement(locator);
+    }
+
+    public static List<WebElement> findElements(By locator) {
+        return driver.findElements(locator);
+    }
+
+    public static void dropdownSelectByIndex(By locator, int index) {
+        try {
+            waitForVisibilityOfElement(locator);
+            Select select = new Select(findElement(locator));
+            select.selectByIndex(index);
+        } catch (Exception e) {
+            failureScenario("Failed to Select element : " + locator + " " + e);
+        }
+    }
+
+//    public static void dropdownSelectByContainsVisibleText(By locator, String visibleText) {
+//        try {
+//            waitForVisibilityOfElement(locator);
+//            Select select = new Select(findElement(locator));
+
+    /// /            select.selectByContainsVisibleText(visibleText);
+//            select.selectByValue(visibleText);
+//        } catch (Exception e) {
+//            failureScenario("Failed to Select element : " + locator + " " + e);
+//        }
+//    }
+
+    public static void selectFromDropdown(By locator, String selectType, String value) {
+        Select select = new Select(driver.findElement(locator));
+
+        switch (selectType.toLowerCase()) {
+            case "text":
+                select.selectByVisibleText(value);
+                break;
+            case "value":
+                select.selectByValue(value);
+                break;
+            case "index":
+                select.selectByIndex(Integer.parseInt(value));
+                break;
+            default:
+                System.out.println("Invalid selection type: " + selectType);
+        }
+    }
+
+    public static String handleAlert(String alertOperation, String inputText) {
+        try {
+            Alert alert = driver.switchTo().alert();
+
+            switch (alertOperation.toLowerCase()) {
+                case "accept":
+                    alert.accept();
+                    break;
+                case "dismiss":
+                    alert.dismiss();
+                    break;
+                case "gettext":
+                    return alert.getText();
+                case "sendkeys":
+                    alert.sendKeys(inputText);
+                    alert.accept();  // ✅ Accept the alert after input
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported alert operation: " + alertOperation);
+            }
+        } catch (NoAlertPresentException e) {
+            System.out.println("No alert is present.");
+        }
+        return null;
+    }
+
+    public static void switchToWindow(int index) {
+        Set<String> handles = driver.getWindowHandles();
+        int i = 0;
+        for (String handle : handles) {
+            if (i == index) {
+                driver.switchTo().window(handle);
+                break;
+            }
+            i++;
+        }
+    }
+
+    // Store this once when test starts
+    public static String originalWindow;
+
+    // Call this at beginning of test
+    public static void saveOriginalWindow() {
+        originalWindow = driver.getWindowHandle();
+    }
+
+    // Switch back to the original window
+    public static void switchToOriginalWindow() {
+        if (originalWindow != null) {
+            driver.switchTo().window(originalWindow);
+        } else {
+            throw new IllegalStateException("Original window handle was not saved.");
+        }
+    }
+
+    // Close current tab and switch back to original
+    public static void closeCurrentTabAndReturn() {
+        driver.close(); // Closes current tab
+        driver.switchTo().window(originalWindow); // Returns to original
+    }
+
+    public static void dragAndDrop(By sourceElement, By targetElement){
+        WebElement source = findElement(sourceElement);
+        WebElement target = findElement(targetElement);
+
+        Actions actions = new Actions(driver);
+        actions.dragAndDrop(source, target).build().perform();
+    }
+
+    public static void uploadFileUsingRobotClass(String file) throws AWTException {
+        Robot robot = new Robot();
+        robot.delay(1000);
+
+        StringSelection selection = new StringSelection(file);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, null);
+
+        robot.keyPress(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_V);
+        robot.keyRelease(KeyEvent.VK_CONTROL);
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
     }
 }

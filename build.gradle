@@ -35,6 +35,9 @@ dependencies {
 
     // https://mvnrepository.com/artifact/io.rest-assured/rest-assured
     implementation("io.rest-assured:rest-assured:5.5.5")
+
+    // https://mvnrepository.com/artifact/com.github.stephenc.monte/monte-screen-recorder
+//    implementation("com.github.stephenc.monte:monte-screen-recorder:0.7.7.0")
 }
 
 task copyExtentReport(type: Copy) {
@@ -47,7 +50,7 @@ test {
     dependsOn cleanTest
     useTestNG {
         useDefaultListeners = true
-        suites 'src/test/resources/testng.xml' // adjust path if needed
+//        suites 'src/test/resources/testng.xml' // adjust path if needed
     }
     finalizedBy copyExtentReport
 }

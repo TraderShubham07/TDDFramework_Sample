@@ -3,6 +3,7 @@ package core;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
@@ -35,6 +36,15 @@ public abstract class BaseTest {
     public void setUp() {
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver();
+
+//        WebDriverManager.chromedriver().setup();
+
+//        ChromeOptions options = new ChromeOptions();
+//        options.addArguments("--headless=new"); // Use "--headless=new" for Chrome 109+
+//        options.addArguments("--disable-gpu");  // Optional but recommended for CI
+//        options.addArguments("--window-size=1920,1080"); // Ensure full screen area is used
+//
+//        driver = new ChromeDriver(options);
     }
 
     @AfterMethod
